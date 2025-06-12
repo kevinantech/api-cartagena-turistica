@@ -1,8 +1,9 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { AdminAccountService } from './admin-account.service';
 import {
-  AdminAccountService,
-  AuthenticateReturn,
-} from './admin-account.service';
+  AuthenticationResult,
+  Credentials,
+} from 'src/common/entities/auth.entity';
 
 export class RegisterAdminAccountBody {
   email: string;
@@ -37,11 +38,8 @@ export class AdminAccountController {
 
   @Post('authenticate')
   async authenticate(
-    @Body() credentials: AuthenticateAdminAccountBody,
-  ): Promise<AuthenticateReturn> {
-    return await this.adminAccountService.authenticate(
-      credentials.email,
-      credentials.password,
-    );
+    @Body() credentials: Credentials,
+  ): Promise<AuthenticationResult> {
+    return await this.adminAccountService.authenticate(credentials);
   }
 }

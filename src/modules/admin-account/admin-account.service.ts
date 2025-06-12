@@ -3,16 +3,16 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
+import {
+  AuthenticationResult,
+  Credentials,
+} from 'src/common/entities/auth.entity';
 import { AdminAccount } from './admin-account.schema';
 const saltOrRounds = 10;
 
-export type RegisterAdminAccountReturn = {
-  id: string;
-};
-
-export type AuthenticateReturn = {
-  access_token: string;
-};
+export type RegisterAdminAccountReturn = Awaited<
+  ReturnType<AdminAccountService['register']>
+>;
 
 @Injectable()
 export class AdminAccountService {
@@ -22,10 +22,29 @@ export class AdminAccountService {
     private jwtService: JwtService,
   ) {}
 
-  async register(
-    adminAccountBody: AdminAccount,
-    verificationCode: string,
-  ): Promise<RegisterAdminAccountReturn> {
+  async authenticate({
+    email,
+    password,
+  }: Credentials): Promise<AuthenticationResult> {
+    const account = await this.adminAccountModel.findOne({ email }).exec();
+    if (!account) throw new UnauthorizedException();
+
+    const isPasswordValid = await bcrypt.compare(password, account.password);
+
+    if (!isPasswordValid) throw new UnauthorizedException();
+
+    const payload = {
+      id: account._id,
+      email: account.email,
+    };
+
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  // NOTE: Código de verificación quemado.
+  async register(adminAccountBody: AdminAccount, verificationCode: string) {
     const VERIFICATION_CODE = '40306c7fd68b722bd7bbfb4fd7c0ce31';
     if (verificationCode !== VERIFICATION_CODE)
       throw new UnauthorizedException();
@@ -46,29 +65,5 @@ export class AdminAccountService {
     });
 
     return { id: adminAccount._id.toString() };
-  }
-
-  async authenticate(
-    email: string,
-    password: string,
-  ): Promise<AuthenticateReturn> {
-    const adminAccount = await this.adminAccountModel.findOne({ email }).exec();
-    if (!adminAccount) throw new UnauthorizedException();
-
-    const isPasswordValid = await bcrypt.compare(
-      password,
-      adminAccount.password,
-    );
-
-    if (!isPasswordValid) throw new UnauthorizedException();
-
-    const payload = {
-      id: adminAccount._id,
-      email: adminAccount.email,
-    };
-
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
   }
 }
