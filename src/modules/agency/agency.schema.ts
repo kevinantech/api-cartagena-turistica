@@ -1,22 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type ProviderAccountDocument = ProviderAccount & Document;
+export type AgencyDocument = Agency & Document;
 
 @Schema({
-  collection: 'provider_accounts',
+  collection: 'agencies',
   timestamps: true,
   versionKey: false,
 })
-export class ProviderAccount {
+export class Agency {
   @Prop({ required: true })
   name: string;
 
   @Prop({ required: true, unique: true })
   email: string;
-
-  @Prop({ required: true })
-  password: string;
 
   @Prop({ required: true })
   rnt: string;
@@ -31,5 +28,4 @@ export class ProviderAccount {
   phoneNumber: string;
 }
 
-export const ProviderAccountSchema =
-  SchemaFactory.createForClass(ProviderAccount);
+export const AgencySchema = SchemaFactory.createForClass(Agency);

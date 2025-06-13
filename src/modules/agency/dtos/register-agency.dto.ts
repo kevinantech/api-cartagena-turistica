@@ -1,12 +1,6 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsNumberString,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumberString, IsString } from 'class-validator';
 
-export class RegisterProviderAccountDto {
+export class RegisterAgencyDto {
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -14,10 +8,6 @@ export class RegisterProviderAccountDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
-
-  @IsNotEmpty()
-  @IsString()
-  password: string;
 
   @IsNotEmpty()
   @IsNumberString()
@@ -33,6 +23,5 @@ export class RegisterProviderAccountDto {
 
   @IsNotEmpty()
   @IsNumberString()
-  @Length(10, 10)
   phoneNumber: string;
 }

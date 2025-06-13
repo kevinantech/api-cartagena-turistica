@@ -4,36 +4,20 @@ import {
   AuthenticationResult,
   Credentials,
 } from 'src/common/entities/auth.entity';
+import { RegisterAdminAccountDto } from './dtos/register-admin-account.dto';
 
-export class RegisterAdminAccountBody {
-  email: string;
-  password: string;
-  name: string;
-  verificationCode: string;
-}
-
-export class AuthenticateAdminAccountBody {
-  email: string;
-  password: string;
-}
-
-@Controller('admin-account')
+@Controller('admin/account')
 export class AdminAccountController {
   constructor(private readonly adminAccountService: AdminAccountService) {}
 
   @Post('register')
   @HttpCode(201)
   async register(
-    @Body(/* new ValidationPipe({ transform: true }) */)
-    registerAdminAccountBody: RegisterAdminAccountBody,
+    @Body()
+    registerAdminAccountBody: RegisterAdminAccountDto,
   ) {
-    const { name, email, password, verificationCode } =
-      registerAdminAccountBody;
-
-    return await this.adminAccountService.register(
-      { name, email, password },
-      verificationCode,
-    );
+    const { verificationCode, ...adminBody } = registerAdminAccountBody;
+    return await this.adminAccountService.register(adminBody, verificationCode);
   }
 
   @Post('authenticate')

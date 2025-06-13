@@ -35,6 +35,7 @@ export class AdminAccountService {
 
     const payload = {
       id: account._id,
+      name: account.name,
       email: account.email,
     };
 
@@ -45,7 +46,7 @@ export class AdminAccountService {
 
   // NOTE: Código de verificación quemado.
   async register(adminAccountBody: AdminAccount, verificationCode: string) {
-    const VERIFICATION_CODE = '40306c7fd68b722bd7bbfb4fd7c0ce31';
+    const VERIFICATION_CODE = process.env.ADMIN_REGISTER_VERIFICATION_CODE;
     if (verificationCode !== VERIFICATION_CODE)
       throw new UnauthorizedException();
 
