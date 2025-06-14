@@ -1,14 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Role } from 'src/decorators/role/roles.decorator';
 
-export type AgencyDocument = Agency & Document;
+export type AccountDocument = Account & Document;
 
 @Schema({
-  collection: 'agencies',
+  collection: 'accounts',
   timestamps: true,
   versionKey: false,
 })
-export class Agency {
+export class Account {
   @Prop({ required: true })
   name: string;
 
@@ -16,16 +17,13 @@ export class Agency {
   email: string;
 
   @Prop({ required: true })
-  rnt: string;
-
-  @Prop({ required: true, unique: true })
-  nit: string;
+  password_hash: string;
 
   @Prop({ required: true })
-  address: string;
+  role: Role;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   phoneNumber: string;
 }
 
-export const AgencySchema = SchemaFactory.createForClass(Agency);
+export const AccountSchema = SchemaFactory.createForClass(Account);

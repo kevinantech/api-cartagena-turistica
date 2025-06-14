@@ -1,0 +1,14 @@
+[
+  {
+    "code": "beachClub",
+    "name": "Beach Clubs"
+  },
+  {
+    "code": "cityTour",
+    "name": "City Tours"
+  },
+  {
+    "code": "yacht",
+    "name": "Yacht Rentals"
+  }
+]
