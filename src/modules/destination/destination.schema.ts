@@ -1,10 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
+import { Collection } from 'src/common/enums/collection.enum';
 
-export type DestinationDocument = Destination & Document;
+export type DestinationDocument = HydratedDocument<Destination>;
 
 @Schema({
-  collection: 'destinations',
+  collection: Collection.Destination,
   timestamps: true,
   versionKey: false,
 })

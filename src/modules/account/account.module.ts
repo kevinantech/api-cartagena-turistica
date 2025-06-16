@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
+import { Collection } from 'src/common/enums/collection.enum';
 import { JwtConfig } from 'src/config/jwt.config';
 import { AccountController } from './account.controller';
-import { Account, AccountSchema } from './account.schema';
+import { AccountSchema } from './account.schema';
 import { AccountService } from './account.service';
 
 @Module({
@@ -11,7 +12,7 @@ import { AccountService } from './account.service';
   imports: [
     MongooseModule.forFeature([
       {
-        name: Account.name,
+        name: Collection.Account,
         schema: AccountSchema,
       },
     ]),

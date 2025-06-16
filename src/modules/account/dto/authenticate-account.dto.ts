@@ -1,10 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
-export interface AuthenticationResult {
-  access_token: string;
-}
-
-export class Credentials {
+export class AuthenticateAccountDto {
   @IsEmail()
   @IsNotEmpty()
   email: string;

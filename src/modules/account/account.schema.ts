@@ -1,11 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
+import { Collection } from 'src/common/enums/collection.enum';
 import { Role } from 'src/decorators/role/roles.decorator';
 
-export type AccountDocument = Account & Document;
+export type AccountDocument = HydratedDocument<Account>;
 
 @Schema({
-  collection: 'accounts',
+  collection: Collection.Account,
   timestamps: true,
   versionKey: false,
 })
@@ -19,10 +20,10 @@ export class Account {
   @Prop({ required: true })
   password_hash: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, enum: Role })
   role: Role;
 
-  @Prop({ required: false })
+  @Prop()
   phoneNumber: string;
 }
 
