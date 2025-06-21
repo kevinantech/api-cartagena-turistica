@@ -9,6 +9,7 @@ export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @Post('authenticate')
+  @HttpCode(HttpStatus.OK)
   async authenticate(@Body() authenticateAccountDto: AuthenticateAccountDto) {
     return await this.accountService.authenticate(authenticateAccountDto);
   }

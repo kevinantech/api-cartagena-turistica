@@ -1,12 +1,13 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
+import { Collection } from 'src/common/enums/collection.enum';
+import { Role } from 'src/decorators/role/roles.decorator';
 import { Account } from './account.schema';
 import { AuthenticateAccountDto } from './dto/authenticate-account.dto';
 import { RegisterAccountDto } from './dto/register-account.dto';
-import { Collection } from 'src/common/enums/collection.enum';
+import { IJwtDriver } from 'src/drivers/jwt/jwt.driver';
 const saltOrRounds = 10;
 
 @Injectable()
@@ -14,32 +15,34 @@ export class AccountService {
   constructor(
     @InjectModel(Collection.Account)
     private accountModel: Model<Account>,
-    private jwtService: JwtService,
+    private jwtDriver: IJwtDriver,
   ) {}
 
   async authenticate(
     authenticateAccountDto: AuthenticateAccountDto,
   ): Promise<{ access_token: string }> {
+    const unauthorizedMessage = 'Correo o contraseña incorrectos';
     const account = await this.accountModel
       .findOne({ email: authenticateAccountDto.email })
       .exec();
-    if (!account) throw new UnauthorizedException();
+    if (!account) throw new UnauthorizedException(unauthorizedMessage);
 
     const isPasswordValid = await bcrypt.compare(
       authenticateAccountDto.password,
       account.password_hash,
     );
 
-    if (!isPasswordValid) throw new UnauthorizedException();
+    if (!isPasswordValid) throw new UnauthorizedException(unauthorizedMessage);
 
     const payload = {
       id: account._id,
+      role: Role.Admin,
       name: account.name,
       email: account.email,
     };
 
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: this.jwtDriver.sign(payload),
     };
   }
 

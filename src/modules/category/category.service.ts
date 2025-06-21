@@ -15,4 +15,8 @@ export class CategoryService {
   async create(createCategoryDto: CreateCategoryDto) {
     return await this.categoryModel.create(createCategoryDto);
   }
+
+  async findAll() {
+    return await this.categoryModel.find().exec();
+  }
 }

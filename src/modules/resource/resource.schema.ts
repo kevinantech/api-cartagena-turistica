@@ -24,9 +24,6 @@ export class Resource {
   capacity: number;
 
   @Prop({ required: true })
-  availableUnits: number;
-
-  @Prop({ required: true })
   availability: boolean;
 }
 

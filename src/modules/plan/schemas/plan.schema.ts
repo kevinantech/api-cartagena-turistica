@@ -2,11 +2,11 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import Mongoose, { HydratedDocument } from 'mongoose';
 import { Collection } from 'src/common/enums/collection.enum';
 import { Currency } from 'src/common/enums/currency.enum';
+import { DurationUnit } from 'src/common/enums/duration-unit.enum';
 import {
-  PlanBookingConfig,
-  PlanBookingConfigSchema,
-} from './plan-booking-config.schema';
-import { PlanDuration, PlanDurationSchema } from './plan-duration.schema';
+  PlanReservationConfig,
+  PlanReservationConfigSchema,
+} from './plan-reservation-config.schema';
 import { PlanSchedule, PlanScheduleSchema } from './plan-schedule.schema';
 
 export type PlanDocument = HydratedDocument<Plan>;
@@ -23,17 +23,17 @@ export class Plan {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ type: PlanDurationSchema, required: true })
-  duration: PlanDuration;
+  @Prop({ required: true, enum: DurationUnit })
+  durationUnit: DurationUnit;
 
   @Prop({ required: true })
-  includes: string[];
+  durationQuantity: number;
+
+  @Prop({ required: true, enum: Currency })
+  priceCurrency: Currency;
 
   @Prop({ required: true })
-  price: number;
-
-  @Prop({ required: true })
-  currency: Currency;
+  priceAmount: number;
 
   @Prop({ type: [Mongoose.Schema.Types.ObjectId], ref: Collection.Destination })
   destinations: Mongoose.Types.ObjectId[];
@@ -44,11 +44,11 @@ export class Plan {
   @Prop({ type: [PlanScheduleSchema] })
   schedules: PlanSchedule[];
 
-  @Prop({ type: PlanBookingConfigSchema })
-  bookingConfig: PlanBookingConfig;
+  @Prop({ type: PlanReservationConfigSchema })
+  reservationConfig: PlanReservationConfig;
 
   @Prop({ required: true })
-  isBookeable: boolean;
+  isReservable: boolean;
 
   @Prop({ default: false })
   isFeatured: boolean;

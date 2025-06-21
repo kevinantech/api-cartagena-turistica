@@ -15,4 +15,8 @@ export class DestinationService {
   async create(createDestinationDto: CreateDestinationDto) {
     return await this.destinationModel.create(createDestinationDto);
   }
+
+  async findAll() {
+    return await this.destinationModel.find().exec();
+  }
 }

@@ -1,21 +1,33 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
+import env from './common/env/env.config';
+import { RolesGuard } from './guards/roles.guard';
 import { AccountModule } from './modules/account/account.module';
 import { CategoryModule } from './modules/category/category.module';
 import { DestinationModule } from './modules/destination/destination.module';
 import { PlanModule } from './modules/plan/plan.module';
-import { ResourceModule } from './modules/resource/resource.module';
+import { DriversModule } from './drivers/drivers.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env.local' }),
-    MongooseModule.forRoot(process.env.MONGO_URI as string),
+    ConfigModule.forRoot({ isGlobal: true, cache: true, load: [env] }),
+    MongooseModule.forRootAsync({
+      useFactory: (config: ConfigService) => ({ uri: config.get('MONGO_URI') }),
+      inject: [ConfigService],
+    }),
+    DriversModule,
     AccountModule,
     CategoryModule,
     DestinationModule,
     PlanModule,
-    ResourceModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule {}
